@@ -28,6 +28,19 @@ scripts/env/setup.bat
 The virtual environment installs the toolchain pinned in `scripts/requirements.txt`:
 `cmake`, `conan`, `ninja`, `clang-format`, `pre-commit` and `gcovr` (used by the coverage tool).
 
+It needs Python 3.10 or newer (`pre-commit` 4.5). On Linux/macOS `setup.sh` picks the newest `python3.X` on the
+`PATH` that meets it, so it works where `python3` is older (Ubuntu 20.04 ships 3.8). Set `PYTHON=<path to python>` to
+choose the interpreter. An existing `.venv` built with an older Python is recreated. When there is no suitable
+Python, `setup.sh` stops before creating `.venv` and says so.
+
+On Ubuntu 20.04 neither the Ubuntu archive (3.9 at most) nor the deadsnakes PPA (no longer built for 20.04) provides
+Python 3.10 or newer: install it another way (e.g. `uv python install 3.12`) and pass it with `PYTHON`.
+
+### Tests
+`tests/test_find_python.sh` checks which interpreter `setup.sh` picks, with fake interpreters (no network).
+After `scripts/env/setup.sh`, `bash tests/check_venv.sh <major.minor>` checks the environment it left: Python
+version, installed tools, `CONAN_HOME` set once, pre-commit hook.
+
 ## Install Conan packages
 ```bash
 # Install packages and create CMakePresets.json + CMake toolchain file
